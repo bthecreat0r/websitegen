@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Website Request Form</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#111;min-height:100vh}
+.shell{max-width:680px;margin:0 auto;padding:32px 16px 64px}
+.top{text-align:center;margin-bottom:32px}
+.top h1{font-size:26px;font-weight:600;margin-bottom:6px}
+.top p{font-size:15px;color:#666}
+.prog-wrap{display:flex;gap:6px;margin-bottom:28px}
+.pb{height:4px;flex:1;border-radius:99px;background:#e0e0e0;transition:background .3s}
+.pb.done{background:#1a6fcf}
+.step{display:none}.step.active{display:block}
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:14px;padding:24px;margin-bottom:16px}
+.card-title{font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.opt{font-size:11px;color:#aaa;margin-left:4px;font-weight:400}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;color:#555;margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;background:#fff;color:#111}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#1a6fcf}
+.field textarea{min-height:80px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:6px 14px;border-radius:99px;border:1px solid #ddd;font-size:13px;cursor:pointer;color:#555;background:#fff;transition:all .15s;user-select:none}
+.tag.on{background:#e8f0fd;color:#1a6fcf;border-color:#a8c4f5}
+.color-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.swatch{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s}
+.swatch.on{border-color:#111;transform:scale(1.15)}
+.custom-color{display:flex;align-items:center;gap:8px;margin-top:10px}
+.custom-color input{width:140px}
+.upload-box{border:1.5px dashed #ddd;border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:background .15s}
+.upload-box:hover{background:#f9f9f9}
+.upload-box p{font-size:13px;color:#888;margin-bottom:3px}
+.upload-box span{font-size:11px;color:#bbb}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+.logo-thumb{width:90px;height:52px;object-fit:contain;border-radius:8px;border:1px solid #eee;background:#f5f5f3;padding:4px}
+.review-card{background:#f9f9f7;border-radius:10px;padding:12px;margin-bottom:8px}
+.review-card input,.review-card textarea,.review-card select{border:1px solid #e0e0e0;border-radius:6px;font-size:13px;padding:7px 10px;font-family:inherit;width:100%;outline:none}
+.review-card textarea{min-height:56px;resize:vertical}
+.add-btn{font-size:13px;color:#1a6fcf;border:1px solid #ddd;border-radius:8px;padding:6px 14px;cursor:pointer;background:#fff;margin-top:8px;transition:background .15s}
+.add-btn:hover{background:#f0f4ff}
+.step-hd{margin-bottom:24px}
+.step-hd h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.step-hd p{font-size:14px;color:#666}
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-back{background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 22px;font-size:14px;cursor:pointer;color:#555;transition:background .15s}
+.btn-back:hover{background:#f5f5f3}
+.btn-next{background:#1a6fcf;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;cursor:pointer;font-weight:500;transition:background .15s}
+.btn-next:hover{background:#1558a8}
+.success-wrap{text-align:center;padding:48px 24px}
+.success-icon{width:60px;height:60px;background:#e8f5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:26px}
+.success-wrap h2{font-size:22px;font-weight:600;margin-bottom:8px}
+.success-wrap p{font-size:15px;color:#666;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="top">
+    <h1>Tell us about your business</h1>
+    <p>Fill out this form and we'll create a custom website for you.</p>
+  </div>
+  <div class="prog-wrap" id="prog"></div>
+
+  <div class="step active" id="s0">
+    <div class="step-hd"><h2>Basic information</h2><p>Step 1 of 5</p></div>
+    <div class="card">
+      <div class="card-title">Business details</div>
+      <div class="field"><label>Business name</label><input id="biz-name" placeholder="e.g. Sunrise Plumbing Co." /></div>
+      <div class="row2">
+        <div class="field"><label>Business type</label>
+          <select id="biz-type">
+            <option value="">Select type...</option>
+            <option>Restaurant / Cafe</option><option>Home Services</option><option>Salon / Spa</option>
+            <option>Retail Shop</option><option>Fitness / Gym</option><option>Medical / Dental</option>
+            <option>Legal / Financial</option><option>Auto Services</option><option>Pet Services</option>
+            <option>Childcare / Education</option><option>Photography</option><option>Real Estate</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Phone number</label><input id="biz-phone" placeholder="(770) 555-0000" /></div>
+      </div>
+      <div class="field"><label>Email address</label><input type="email" id="biz-email" placeholder="hello@yourbusiness.com" /></div>
+      <div class="field"><label>Street address</label><input id="biz-street" placeholder="123 Main Street" /></div>
+      <div class="row3">
+        <div class="field"><label>City</label><input id="biz-city" placeholder="Dallas" /></div>
+        <div class="field"><label>State</label><input id="biz-state" placeholder="GA" /></div>
+        <div class="field"><label>ZIP</label><input id="biz-zip" placeholder="30132" /></div>
+      </div>
+      <div class="field"><label>Existing website <span class="opt">(optional)</span></label><input id="biz-url" placeholder="www.yourbusiness.com" /></div>
+    </div>
+    <div class="btn-row"><button class="btn-next" onclick="go(1)">Next →</button></div>
+  </div>
+
+  <div class="step" id="s1">
+    <div class="step-hd"><h2>Services & customers</h2><p>Step 2 of 5</p></div>
+    <div class="card">
+      <div class="card-title">Services offered</div>
+      <div class="field"><label>List your main services</label><textarea id="biz-services" placeholder="e.g. Drain cleaning, pipe repair, water heater installation, emergency plumbing..."></textarea></div>
+      <div class="field"><label>Pricing info <span class="opt">(optional)</span></label><input id="biz-pricing" placeholder="e.g. Service calls from $89, free estimates" /></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Your ideal customer</div>
+      <div class="field"><label>Who are you trying to reach?</label><textarea id="biz-customer" placeholder="e.g. Homeowners in the Dallas GA area needing reliable, affordable plumbing help..."></textarea></div>
+      <div class="field"><label>Cities / areas you serve</label><input id="biz-area" placeholder="e.g. Dallas, Hiram, Acworth, Paulding County" /></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Main goal for your website</div>
+      <div class="tag-wrap" id="goal-group">
+        <div class="tag on" onclick="tog(this)">Get more phone calls</div>
+        <div class="tag" onclick="tog(this)">Generate form leads</div>
+        <div class="tag" onclick="tog(this)">Book appointments online</div>
+        <div class="tag" onclick="tog(this)">Showcase portfolio / work</div>
+        <div class="tag" onclick="tog(this)">Build brand credibility</div>
+        <div class="tag" onclick="tog(this)">Drive foot traffic</div>
+        <div class="tag" onclick="tog(this)">Sell products online</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="go(0)">← Back</button>
+      <button class="btn-next" onclick="go(2)">Next →</button>
+    </div>
+  </div>
+
+  <div class="step" id="s2">
+    <div class="step-hd"><h2>About your business</h2><p>Step 3 of 5</p></div>
+    <div class="card">
+      <div class="field"><label>Tagline or slogan <span class="opt">(optional)</span></label><input id="biz-tagline" placeholder="e.g. Trusted plumbing since 1998" /></div>
+      <div class="field"><label>Tell us about your business</label><textarea id="biz-desc" placeholder="History, what makes you special, awards, years in business, team size, values..."></textarea></div>
+      <div class="field"><label>Hours of operation</label><input id="biz-hours" placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–2pm" /></div>
+      <div class="field"><label>Social media links <span class="opt">(optional)</span></label><input id="biz-social" placeholder="e.g. facebook.com/yourbusiness, instagram.com/..." /></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Testimonials / reviews <span class="opt">(optional)</span></div>
+      <div id="testimonials-list"></div>
+      <button class="add-btn" onclick="addTestimonial()">+ Add a review</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="go(1)">← Back</button>
+      <button class="btn-next" onclick="go(3)">Next →</button>
+    </div>
+  </div>
+
+  <div class="step" id="s3">
+    <div class="step-hd"><h2>Style & look</h2><p>Step 4 of 5</p></div>
+    <div class="card">
+      <div class="card-title">Brand color</div>
+      <div class="color-row" id="color-group">
+        <div class="swatch on" style="background:#1a6fcf" data-c="#1a6fcf" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#16a34a" data-c="#16a34a" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#dc2626" data-c="#dc2626" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#7c3aed" data-c="#7c3aed" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#ea580c" data-c="#ea580c" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#0891b2" data-c="#0891b2" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#be185d" data-c="#be185d" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#374151" data-c="#374151" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#b45309" data-c="#b45309" onclick="pickColor(this)"></div>
+        <div class="swatch" style="background:#0f766e" data-c="#0f766e" onclick="pickColor(this)"></div>
+      </div>
+      <div class="custom-color">
+        <label style="font-size:13px;color:#555">Custom color:</label>
+        <input type="text" id="custom-color" placeholder="#2563eb" style="width:120px;padding:7px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px" oninput="customHex(this)"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Website style <span class="opt">(optional — pick any that fit)</span></div>
+      <div class="tag-wrap" id="style-group">
+        <div class="tag" onclick="tog(this)">Clean & minimal</div>
+        <div class="tag" onclick="tog(this)">Bold & modern</div>
+        <div class="tag" onclick="tog(this)">Warm & friendly</div>
+        <div class="tag" onclick="tog(this)">Corporate & professional</div>
+        <div class="tag" onclick="tog(this)">Rustic / local feel</div>
+        <div class="tag" onclick="tog(this)">Luxury & premium</div>
+        <div class="tag" onclick="tog(this)">Fun & colorful</div>
+        <div class="tag" onclick="tog(this)">Dark / moody</div>
+      </div>
+      <div class="field" style="margin-top:12px"><label>Any other style notes <span class="opt">(optional)</span></label><input id="style-notes" placeholder="e.g. Something similar to Home Depot but more local and friendly" /></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sections to include</div>
+      <div class="tag-wrap" id="sections-group">
+        <div class="tag on" onclick="tog(this)">Hero / banner</div>
+        <div class="tag on" onclick="tog(this)">About us</div>
+        <div class="tag on" onclick="tog(this)">Services</div>
+        <div class="tag on" onclick="tog(this)">Contact form</div>
+        <div class="tag" onclick="tog(this)">Photo gallery</div>
+        <div class="tag" onclick="tog(this)">Testimonials</div>
+        <div class="tag" onclick="tog(this)">FAQ</div>
+        <div class="tag" onclick="tog(this)">Map / location</div>
+        <div class="tag" onclick="tog(this)">Menu / pricing</div>
+        <div class="tag" onclick="tog(this)">Team / staff</div>
+        <div class="tag" onclick="tog(this)">Before & after</div>
+        <div class="tag" onclick="tog(this)">Service area</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="go(2)">← Back</button>
+      <button class="btn-next" onclick="go(4)">Next →</button>
+    </div>
+  </div>
+
+  <div class="step" id="s4">
+    <div class="step-hd"><h2>Logo & photos</h2><p>Step 5 of 5 — optional but recommended</p></div>
+    <div class="card">
+      <div class="card-title">Logo <span class="opt">(optional)</span></div>
+      <div class="upload-box" onclick="document.getElementById('logo-input').click()">
+        <p>Click to upload your logo</p>
+        <span>PNG, JPG, or SVG</span>
+      </div>
+      <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="handleLogo(this)"/>
+      <div class="thumbs" id="logo-prev"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Business photos <span class="opt">(optional — storefront, team, work, etc.)</span></div>
+      <div class="upload-box" onclick="document.getElementById('photos-input').click()">
+        <p>Click to upload photos</p>
+        <span>Up to 8 images</span>
+      </div>
+      <input type="file" id="photos-input" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)"/>
+      <div class="thumbs" id="photos-prev"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="go(3)">← Back</button>
+      <button class="btn-next" id="submit-btn" onclick="submitForm()">Submit →</button>
+    </div>
+  </div>
+
+  <div class="step" id="s-success">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <h2>You're all set!</h2>
+      <p>We've received your information for <strong id="success-name"></strong>.<br/>
+      Check your email — we sent you a confirmation.<br/><br/>
+      We'll be in touch soon with your website preview!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND = window.BACKEND_URL || "http://localhost:3000";
+const STEPS = ["s0","s1","s2","s3","s4","s-success"];
+const TOTAL = 5;
+let cur = 0, selColor = "#1a6fcf", logoData = "", photoDataArr = [], testimonials = [];
+
+function prog(n) {
+  const el = document.getElementById("prog");
+  el.innerHTML = "";
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement("div");
+    d.className = "pb" + (i < n ? " done" : "");
+    el.appendChild(d);
+  }
+}
+
+function go(n) {
+  document.getElementById(STEPS[cur]).classList.remove("active");
+  cur = n;
+  document.getElementById(STEPS[cur]).classList.add("active");
+  prog(n);
+  window.scrollTo(0, 0);
+}
+
+function tog(el) { el.classList.toggle("on"); }
+
+function getSel(id) {
+  return [...document.querySelectorAll("#" + id + " .tag.on")].map(t => t.textContent.trim()).join(", ");
+}
+
+function pickColor(el) {
+  document.querySelectorAll(".swatch").forEach(s => s.classList.remove("on"));
+  el.classList.add("on");
+  selColor = el.dataset.c;
+}
+
+function customHex(el) {
+  const v = el.value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+    selColor = v;
+    document.querySelectorAll(".swatch").forEach(s => s.classList.remove("on"));
+  }
+}
+
+function addTestimonial() {
+  const idx = testimonials.length;
+  testimonials.push({ name: "", text: "", rating: 5 });
+  const wrap = document.createElement("div");
+  wrap.className = "review-card";
+  wrap.style.marginBottom = "10px";
+  wrap.innerHTML = `
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input placeholder="Customer name" oninput="testimonials[${idx}].name=this.value" style="flex:1"/>
+      <select style="width:100px" onchange="testimonials[${idx}].rating=+this.value">
+        <option value="5">5 stars</option><option value="4">4 stars</option>
+        <option value="3">3 stars</option><option value="2">2 stars</option>
+      </select>
+    </div>
+    <textarea placeholder="What did they say about your business?" oninput="testimonials[${idx}].text=this.value"></textarea>
+  `;
+  document.getElementById("testimonials-list").appendChild(wrap);
+}
+
+function handleLogo(inp) {
+  const f = inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    logoData = e.target.result;
+    const prev = document.getElementById("logo-prev");
+    prev.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = logoData; img.className = "logo-thumb";
+    prev.appendChild(img);
+  };
+  r.readAsDataURL(f);
+}
+
+function handlePhotos(inp) {
+  const files = [...inp.files].slice(0, 8);
+  photoDataArr = [];
+  const prev = document.getElementById("photos-prev");
+  prev.innerHTML = "";
+  files.forEach(f => {
+    const r = new FileReader();
+    r.onload = e => {
+      photoDataArr.push(e.target.result);
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      prev.appendChild(img);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+async function submitForm() {
+  const btn = document.getElementById("submit-btn");
+  btn.textContent = "Submitting...";
+  btn.disabled = true;
+
+  const fd = {
+    name: document.getElementById("biz-name").value || "Your Business",
+    type: document.getElementById("biz-type").value || "",
+    phone: document.getElementById("biz-phone").value || "",
+    email: document.getElementById("biz-email").value || "",
+    street: document.getElementById("biz-street").value || "",
+    city: document.getElementById("biz-city").value || "",
+    state: document.getElementById("biz-state").value || "",
+    zip: document.getElementById("biz-zip").value || "",
+    url: document.getElementById("biz-url").value || "",
+    services: document.getElementById("biz-services").value || "",
+    pricing: document.getElementById("biz-pricing").value || "",
+    customer: document.getElementById("biz-customer").value || "",
+    area: document.getElementById("biz-area").value || "",
+    goals: getSel("goal-group"),
+    tagline: document.getElementById("biz-tagline").value || "",
+    desc: document.getElementById("biz-desc").value || "",
+    hours: document.getElementById("biz-hours").value || "",
+    social: document.getElementById("biz-social").value || "",
+    color: selColor,
+    stylePrefs: getSel("style-group"),
+    styleNotes: document.getElementById("style-notes").value || "",
+    sections: getSel("sections-group"),
+    testimonials: [...testimonials],
+    hasLogo: !!logoData,
+    photoCount: photoDataArr.length,
+  };
+
+  try {
+    const res = await fetch(BACKEND + "/api/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(fd),
+    });
+    if (res.ok) {
+      document.getElementById("success-name").textContent = fd.name;
+      go(5);
+    } else {
+      throw new Error("Server error");
+    }
+  } catch (e) {
+    alert("Something went wrong. Please try again or contact us directly.");
+    btn.textContent = "Submit →";
+    btn.disabled = false;
+  }
+}
+
+prog(0);
+</script>
+</body>
+</html>
